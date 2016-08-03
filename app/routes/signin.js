@@ -50,8 +50,10 @@ export default Route.extend(styleBody, {
         oauthAuthentication() {
             let authStrategy = 'authenticator:oauth2-ghost';
 
+            this.toggleProperty('controller.loggingIn');
+
             this.get('torii')
-                .open('google-oauth2')
+                .open('ghost-oauth2')
                 .then((googleAuth) => {
                     // Authentication transitions to posts.index, we can leave spinner running unless there is an error
                     this.get('session')
@@ -91,8 +93,9 @@ export default Route.extend(styleBody, {
                     });
                 })
                 .catch((error) => {
-                    console.log('Google authentication failed', error);
-                    this.set('controller.flowErrors', 'Authentication with Google denied or failed');
+                    console.log('Ghost.org authentication failed', error);
+                    this.toggleProperty('controller.loggingIn');
+                    this.set('controller.flowErrors', 'Authentication with Ghost.org denied or failed');
                 });
         }
     }

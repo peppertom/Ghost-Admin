@@ -9,8 +9,6 @@ import config from './config/environment';
 
 Ember.MODEL_FACTORY_INJECTIONS = true;
 
-config.torii.providers['google-oauth2'].redirectUri = window.location.href.replace(/(\/ghost)(.*)/, '$1');
-
 let App = Application.extend({
     Resolver,
     modulePrefix: config.modulePrefix,
