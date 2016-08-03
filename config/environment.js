@@ -41,7 +41,7 @@ module.exports = function (environment) {
             providers: {
                 'google-oauth2': {
                     apiKey: '1073208478572-i0qq8cre1fdej10iukp7r56s9injmq18.apps.googleusercontent.com',
-                    redirectUri: 'http://localhost:2368/ghost'
+                    redirectUri: 'replaced-at-runtime'
                 }
             }
         }
