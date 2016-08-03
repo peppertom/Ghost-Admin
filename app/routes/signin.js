@@ -51,15 +51,11 @@ export default Route.extend(styleBody, {
             let authStrategy = 'authenticator:oauth2';
 
             this.get('torii')
-                .open('google-oauth2-bearer')
+                .open('google-oauth2')
                 .then((googleAuth) => {
-                    let googleToken = googleAuth.authorizationToken.access_token;
-
-                    console.log('Google authentication successful', googleAuth);
-
                     // Authentication transitions to posts.index, we can leave spinner running unless there is an error
                     this.get('session')
-                        .authenticate(authStrategy, {token: googleToken})
+                        .authenticate(authStrategy, {authorizationCode: googleAuth.authorizationCode})
                         .then(() => {
                             console.log('Ghost authentication successful');
                         })

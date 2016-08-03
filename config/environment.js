@@ -39,7 +39,7 @@ module.exports = function (environment) {
 
         torii: {
             providers: {
-                'google-oauth2-bearer': {
+                'google-oauth2': {
                     apiKey: '1073208478572-i0qq8cre1fdej10iukp7r56s9injmq18.apps.googleusercontent.com',
                     redirectUri: 'http://localhost:2368/ghost'
                 }
@@ -55,7 +55,7 @@ module.exports = function (environment) {
         ENV.APP.LOG_VIEW_LOOKUPS = true;
         // Enable mirage here in order to mock API endpoints during development
         ENV['ember-cli-mirage'] = {
-            enabled: false
+            enabled: true
         };
     }
 
