@@ -18,8 +18,7 @@ export default Authenticator.extend({
     },
 
     serverTokenEndpoint: computed('ghostPaths.apiRoot', function () {
-        // return `${this.get('ghostPaths.apiRoot')}/authentication/token`;
-        return `${this.get('ghostPaths.apiRoot')}/authentication/ghost`;
+        return `${this.get('ghostPaths.apiRoot')}/authentication/token`;
     }),
 
     serverTokenRevocationEndpoint: computed('ghostPaths.apiRoot', function () {

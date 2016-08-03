@@ -48,7 +48,7 @@ export default Route.extend(styleBody, {
 
     actions: {
         oauthAuthentication() {
-            let authStrategy = 'authenticator:oauth2';
+            let authStrategy = 'authenticator:oauth2-ghost';
 
             this.get('torii')
                 .open('google-oauth2')
