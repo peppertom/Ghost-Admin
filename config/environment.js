@@ -35,6 +35,15 @@ module.exports = function (environment) {
             authenticationRoute: 'signin',
             routeAfterAuthentication: 'posts',
             routeIfAlreadyAuthenticated: 'posts'
+        },
+
+        torii: {
+            providers: {
+                'google-oauth2-bearer': {
+                    apiKey: '1073208478572-i0qq8cre1fdej10iukp7r56s9injmq18.apps.googleusercontent.com',
+                    redirectUri: 'http://localhost:2368/ghost'
+                }
+            }
         }
     };
 
