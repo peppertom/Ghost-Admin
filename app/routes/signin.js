@@ -47,55 +47,56 @@ export default Route.extend(styleBody, {
     },
 
     actions: {
-        oauthAuthentication() {
+        authenticateWithGhostOrg() {
             let authStrategy = 'authenticator:oauth2-ghost';
 
             this.toggleProperty('controller.loggingIn');
 
             this.get('torii')
                 .open('ghost-oauth2')
-                .then((googleAuth) => {
-                    // Authentication transitions to posts.index, we can leave spinner running unless there is an error
-                    this.get('session')
-                        .authenticate(authStrategy, {authorizationCode: googleAuth.authorizationCode})
-                        .then(() => {
-                            console.log('Ghost authentication successful');
-                        })
-                        .catch((error) => {
-                            this.toggleProperty('controller.loggingIn');
-
-                            if (error && error.errors) {
-                                // we don't get back an ember-data/ember-ajax error object
-                                // back so we need to pass in a null status in order to
-                                // test against the payload
-                                if (isVersionMismatchError(null, error)) {
-                                    let versionMismatchError = new VersionMismatchError(error);
-                                    return this.get('notifications').showAPIError(versionMismatchError);
-                                }
-
-                                error.errors.forEach((err) => {
-                                    err.message = err.message.htmlSafe();
-                                });
-
-                                this.set('controller.flowErrors', error.errors[0].message.string);
-
-                                if (error.errors[0].message.string.match(/user with that email/)) {
-                                    this.get('controller.model.errors').add('identification', '');
-                                }
-
-                                if (error.errors[0].message.string.match(/password is incorrect/)) {
-                                    this.get('controller.model.errors').add('password', '');
-                                }
-                            } else {
-                                // Connection errors don't return proper status message, only req.body
-                                this.get('notifications').showAlert('There was a problem on the server.', {type: 'error', key: 'session.authenticate.failed'});
-                            }
-                    });
+                .then((authentication) => {
+                    this.send('authenticate', authStrategy, [authentication]);
                 })
                 .catch((error) => {
                     console.log('Ghost.org authentication failed', error);
                     this.toggleProperty('controller.loggingIn');
                     this.set('controller.flowErrors', 'Authentication with Ghost.org denied or failed');
+                });
+        },
+
+        authenticate(strategy, authentication) {
+            // Authentication transitions to posts.index, we can leave spinner running unless there is an error
+            this.get('session')
+                .authenticate(strategy, ...authentication)
+                .catch((error) => {
+                    this.toggleProperty('controller.loggingIn');
+
+                    if (error && error.errors) {
+                        // we don't get back an ember-data/ember-ajax error object
+                        // back so we need to pass in a null status in order to
+                        // test against the payload
+                        if (isVersionMismatchError(null, error)) {
+                            let versionMismatchError = new VersionMismatchError(error);
+                            return this.get('notifications').showAPIError(versionMismatchError);
+                        }
+
+                        error.errors.forEach((err) => {
+                            err.message = err.message.htmlSafe();
+                        });
+
+                        this.set('controller.flowErrors', error.errors[0].message.string);
+
+                        if (error.errors[0].message.string.match(/user with that email/)) {
+                            this.get('controller.model.errors').add('identification', '');
+                        }
+
+                        if (error.errors[0].message.string.match(/password is incorrect/)) {
+                            this.get('controller.model.errors').add('password', '');
+                        }
+                    } else {
+                        // Connection errors don't return proper status message, only req.body
+                        this.get('notifications').showAlert('There was a problem on the server.', {type: 'error', key: 'session.authenticate.failed'});
+                    }
                 });
         }
     }
