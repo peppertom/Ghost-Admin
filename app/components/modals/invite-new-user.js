@@ -90,29 +90,28 @@ export default ModalComponent.extend(ValidationEngine, {
             let email = this.get('email');
             let role = this.get('role');
             let notifications = this.get('notifications');
-            let newUser;
+            let invite;
 
             this.validate().then(() => {
                 this.set('submitting', true);
 
-                newUser = this.get('store').createRecord('user', {
+                invite = this.get('store').createRecord('invite', {
                     email,
-                    role,
-                    status: 'invited'
+                    role
                 });
 
-                newUser.save().then(() => {
+                invite.save().then(() => {
                     let notificationText = `Invitation sent! (${email})`;
 
                     // If sending the invitation email fails, the API will still return a status of 201
-                    // but the user's status in the response object will be 'invited-pending'.
-                    if (newUser.get('status') === 'invited-pending') {
+                    // but the invite's status in the response object will be 'invited-pending'.
+                    if (invite.get('status') === 'pending') {
                         notifications.showAlert('Invitation email was not sent.  Please try resending.', {type: 'error', key: 'invite.send.failed'});
                     } else {
                         notifications.showNotification(notificationText, {key: 'invite.send.success'});
                     }
                 }).catch((error) => {
-                    newUser.deleteRecord();
+                    invite.deleteRecord();
                     notifications.showAPIError(error, {key: 'invite.send'});
                 }).finally(() => {
                     this.send('closeModal');

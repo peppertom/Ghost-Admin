@@ -2,6 +2,8 @@ import AuthenticatedRoute from 'ghost-admin/routes/authenticated';
 import CurrentUserSettings from 'ghost-admin/mixins/current-user-settings';
 import PaginationMixin from 'ghost-admin/mixins/pagination';
 import styleBody from 'ghost-admin/mixins/style-body';
+import RSVP from 'rsvp';
+import {isBlank} from 'ember-utils';
 
 export default AuthenticatedRoute.extend(styleBody, CurrentUserSettings, PaginationMixin, {
     titleToken: 'Team',
@@ -10,18 +12,27 @@ export default AuthenticatedRoute.extend(styleBody, CurrentUserSettings, Paginat
 
     paginationModel: 'user',
     paginationSettings: {
-        status: 'active',
+        status: 'all',
         limit: 20
     },
 
     model() {
-        this.loadFirstPage();
-
-        return this.store.query('user', {limit: 'all', status: 'invited'}).then(() => {
-            return this.store.filter('user', () => {
-                return true;
-            });
+        return RSVP.hash({
+            users: this.loadFirstPage().then(() => {
+                return this.store.filter('user', (user) => {
+                    return !user.get('isNew') && !isBlank(user.get('status'));
+                });
+            }),
+            invites: this.store.query('invite', {limit: 'all'}).then(() => {
+                return this.store.filter('invite', (invite) => {
+                    return !invite.get('isNew');
+                });
+            })
         });
+    },
+
+    setupController(controller, models) {
+        controller.setProperties(models);
     },
 
     actions: {
