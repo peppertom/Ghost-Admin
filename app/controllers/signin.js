@@ -5,7 +5,6 @@ import injectController from 'ember-controller/inject';
 import {isEmberArray} from 'ember-array/utils';
 
 import {
-    VersionMismatchError,
     isVersionMismatchError
 } from 'ghost-admin/services/ajax';
 import ValidationEngine from 'ghost-admin/mixins/validation-engine';

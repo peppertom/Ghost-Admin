@@ -1,13 +1,11 @@
-import Ember from 'ember';
+/* jscs:disable requireCamelCaseOrUpperCaseIdentifiers */
 import Oauth2Authenticator from './oauth2';
 import computed from 'ember-computed';
-
-const {
-  RSVP,
-  isEmpty,
-  run,
-  assign
-} = Ember;
+import RSVP from 'rsvp';
+import run from 'ember-runloop';
+import {assign} from 'ember-platform';
+import {isEmpty} from 'ember-utils';
+import {wrap} from 'ember-array/utils';
 
 export default Oauth2Authenticator.extend({
     serverTokenEndpoint: computed('ghostPaths.apiRoot', function () {
@@ -22,16 +20,16 @@ export default Oauth2Authenticator.extend({
             // const data                = { 'grant_type': 'password', username: identification, password };
             let data = identification;
             let serverTokenEndpoint = this.get('serverTokenEndpoint');
-            let scopesString = Ember.makeArray(scope).join(' ');
-            if (!Ember.isEmpty(scopesString)) {
+            let scopesString = wrap(scope).join(' ');
+            if (!isEmpty(scopesString)) {
                 data.scope = scopesString;
             }
             this.makeRequest(serverTokenEndpoint, data).then((response) => {
                 run(() => {
-                    let expiresAt = this._absolutizeExpirationTime(response['expires_in']);
-                    this._scheduleAccessTokenRefresh(response['expires_in'], expiresAt, response['refresh_token']);
+                    let expiresAt = this._absolutizeExpirationTime(response.expires_in);
+                    this._scheduleAccessTokenRefresh(response.expires_in, expiresAt, response.refresh_token);
                     if (!isEmpty(expiresAt)) {
-                        response = assign(response, { 'expires_at': expiresAt });
+                        response = assign(response, {'expires_at': expiresAt});
                     }
                     resolve(response);
                 });
