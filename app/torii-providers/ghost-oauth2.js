@@ -5,7 +5,7 @@ let GhostOauth2 = Oauth2.extend({
     name:    'ghost-oauth2',
     baseUrl: 'http://localhost:8080/oauth2/authorize',
 
-    optionalUrlParams: ['type'],
+    optionalUrlParams: ['type', 'email'],
 
     responseParams: ['code'],
 
@@ -15,6 +15,9 @@ let GhostOauth2 = Oauth2.extend({
     open(options) {
         if (options.type) {
             this.set('type', options.type);
+        }
+        if (options.email) {
+            this.set('email', options.email);
         }
         return this._super(...arguments);
     }

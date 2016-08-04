@@ -10,7 +10,9 @@
             </header>
 
             <form id="signup" class="gh-signin" method="post" novalidate="novalidate">
-                {{#gh-spin-button class="login btn btn-blue btn-block" type="submit" action="authenticateWithGhostOrg" tabindex="3" submitting=loggingIn autoWidth="false"}}Sign in with Ghost{{/gh-spin-button}}
+                {{#gh-spin-button class="login btn btn-blue btn-block" type="submit" action="authenticateWithGhostOrg" tabindex="3" submitting=loggingIn autoWidth="false"}}
+                    Sign in with Ghost to accept
+                {{/gh-spin-button}}
             </form>
 
             <p class="main-error">{{{flowErrors}}}</p>

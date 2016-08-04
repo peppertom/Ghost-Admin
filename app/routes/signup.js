@@ -52,24 +52,27 @@ export default Route.extend(styleBody, {
             model.set('token', params.token);
             model.set('errors', Errors.create());
 
-            let authUrl = this.get('ghostPaths.url').api('authentication', 'invitation');
+            // TODO: re-enable invite validation check once implemented server-side
+            resolve(model);
 
-            return this.get('ajax').request(authUrl, {
-                dataType: 'json',
-                data: {
-                    email
-                }
-            }).then((response) => {
-                if (response && response.invitation && response.invitation[0].valid === false) {
-                    this.get('notifications').showAlert('The invitation does not exist or is no longer valid.', {type: 'warn', delayed: true, key: 'signup.create.invalid-invitation'});
-
-                    return resolve(this.transitionTo('signin'));
-                }
-
-                resolve(model);
-            }).catch(() => {
-                resolve(model);
-            });
+            // let authUrl = this.get('ghostPaths.url').api('authentication', 'invitation');
+            //
+            // return this.get('ajax').request(authUrl, {
+            //     dataType: 'json',
+            //     data: {
+            //         email
+            //     }
+            // }).then((response) => {
+            //     if (response && response.invitation && response.invitation[0].valid === false) {
+            //         this.get('notifications').showAlert('The invitation does not exist or is no longer valid.', {type: 'warn', delayed: true, key: 'signup.create.invalid-invitation'});
+            //
+            //         return resolve(this.transitionTo('signin'));
+            //     }
+            //
+            //     resolve(model);
+            // }).catch(() => {
+            //     resolve(model);
+            // });
         });
     },
 
@@ -82,14 +85,15 @@ export default Route.extend(styleBody, {
 
     actions: {
         authenticateWithGhostOrg() {
-            let authStrategy = 'authenticator:oauth2-ghost-invite';
+            let authStrategy = 'authenticator:oauth2-ghost';
             let inviteToken = this.get('controller.model.token');
+            let email = this.get('controller.model.email');
 
             this.toggleProperty('controller.loggingIn');
             this.set('controller.flowErrors', '');
 
             this.get('torii')
-                .open('ghost-oauth2', {type: 'invite'})
+                .open('ghost-oauth2', {email, type: 'invite'})
                 .then((authentication) => {
                     let _authentication = assign({}, authentication, {inviteToken});
                     this.send('authenticate', authStrategy, [_authentication]);
