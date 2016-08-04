@@ -10,10 +10,16 @@ export default Component.extend({
 
     notifications: service(),
 
-    createdAtUTC: computed('user.createdAtUTC', function () {
+    createdAt: computed('user.createdAtUTC', function () {
         let createdAtUTC = this.get('user.createdAtUTC');
 
         return createdAtUTC ? moment(createdAtUTC).fromNow() : '';
+    }),
+
+    expiresAt: computed('user.expires', function () {
+        let expires = this.get('user.expires');
+
+        return expires ? moment(expires).fromNow() : '';
     }),
 
     actions: {

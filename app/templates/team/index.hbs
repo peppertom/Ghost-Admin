@@ -38,7 +38,8 @@
                                         </span>
                                     {{else}}
                                         <span class="description">
-                                            Invitation sent: {{component.createdAtUTC}}
+                                            Invitation sent: {{component.createdAt}},
+                                            expires {{component.expiresAt}}
                                         </span>
                                     {{/if}}
                                 </div>
