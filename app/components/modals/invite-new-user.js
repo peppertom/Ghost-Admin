@@ -53,15 +53,19 @@ export default ModalComponent.extend(ValidationEngine, {
         // the API should return an appropriate error when attempting to save
         return new Promise((resolve, reject) => {
             return this._super().then(() => {
-                this.get('store').findAll('user', {reload: true}).then((result) => {
-                    let invitedUser = result.findBy('email', email);
+                return RSVP.hash({
+                    users: this.get('store').findAll('user', {reload: true}),
+                    invites: this.get('store').findAll('invite', {reload: true})
+                }).then((data) => {
+                    let existingUser = data.users.findBy('email', email);
+                    let existingInvite = data.invites.findBy('email', email);
 
-                    if (invitedUser) {
+                    if (existingUser || existingInvite) {
                         this.get('errors').clear('email');
-                        if (invitedUser.get('status') === 'invited' || invitedUser.get('status') === 'invited-pending') {
-                            this.get('errors').add('email', 'A user with that email address was already invited.');
-                        } else {
+                        if (existingUser) {
                             this.get('errors').add('email', 'A user with that email address already exists.');
+                        } else {
+                            this.get('errors').add('email', 'A user with that email address was already invited.');
                         }
 
                         // TODO: this shouldn't be needed, ValidationEngine doesn't mark
