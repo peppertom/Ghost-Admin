@@ -51,9 +51,10 @@ export default Route.extend(styleBody, {
             let authStrategy = 'authenticator:oauth2-ghost';
 
             this.toggleProperty('controller.loggingIn');
+            this.set('controller.flowErrors', '');
 
             this.get('torii')
-                .open('ghost-oauth2')
+                .open('ghost-oauth2', {type: 'signin'})
                 .then((authentication) => {
                     this.send('authenticate', authStrategy, [authentication]);
                 })

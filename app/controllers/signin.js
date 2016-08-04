@@ -14,11 +14,13 @@ export default Controller.extend(ValidationEngine, {
     loggingIn: false,
     authProperties: ['identification', 'password'],
 
+    ajax: injectService(),
+    application: injectController(),
+    config: injectService(),
     ghostPaths: injectService(),
     notifications: injectService(),
     session: injectService(),
-    application: injectController(),
-    ajax: injectService(),
+
     flowErrors: '',
 
     // ValidationEngine settings
