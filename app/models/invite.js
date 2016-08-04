@@ -2,6 +2,7 @@ import Model from 'ember-data/model';
 import attr from 'ember-data/attr';
 import {hasMany} from 'ember-data/relationships';
 import computed from 'ember-computed';
+import injectService from 'ember-service/inject';
 
 export default Model.extend({
     token: attr('string'),
@@ -21,6 +22,8 @@ export default Model.extend({
     // models instead of the current hacks which make invites look like
     // users
     invited: true,
+
+    ghostPaths: injectService(),
 
     role: computed('roles', {
         get() {
