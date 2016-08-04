@@ -1,5 +1,6 @@
 import Model from 'ember-data/model';
 import attr from 'ember-data/attr';
+import {hasMany} from 'ember-data/relationships';
 import computed from 'ember-computed';
 
 export default Model.extend({
@@ -11,15 +12,27 @@ export default Model.extend({
     updatedAtUTC: attr('moment-utc'),
     updatedBy: attr('number'),
     status: attr('string'),
+    roles: hasMany('role', {
+        embedded: 'always',
+        async: false
+    }),
 
     // TODO: remove once `gh-user-invited` is updated to work with invite
     // models instead of the current hacks which make invites look like
     // users
     invited: true,
 
-    // TODO: replace with actual role once the server response is updated
-    role: computed(function () {
-        return this.store.peekAll('role').get('firstObject');
+    role: computed('roles', {
+        get() {
+            return this.get('roles.firstObject');
+        },
+        set(key, value) {
+            // Only one role per user, so remove any old data.
+            this.get('roles').clear();
+            this.get('roles').pushObject(value);
+
+            return value;
+        }
     }),
 
     resendInvite() {
