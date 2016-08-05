@@ -23,6 +23,7 @@ export default Model.extend({
     // users
     invited: true,
 
+    ajax: injectService(),
     ghostPaths: injectService(),
 
     role: computed('roles', {
