@@ -44,6 +44,9 @@ export default Service.extend(_ProxyMixin, {
             config[propertyName] = _mapType(value, type);
         });
 
+        // TODO: remove once we have proper config values from Ghost
+        config.patronusAuth = true;
+
         return config;
     }),
 
