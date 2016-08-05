@@ -1,9 +1,16 @@
 import Oauth2 from 'torii/providers/oauth2-code';
+import injectService from 'ember-service/inject';
+import computed from 'ember-computed';
 
 let GhostOauth2 = Oauth2.extend({
 
+    config: injectService(),
+
     name:    'ghost-oauth2',
     baseUrl: 'http://localhost:8080/oauth2/authorize',
+    apiKey: computed(function () {
+        return this.get('config.patronusId');
+    }),
 
     optionalUrlParams: ['type', 'email'],
 

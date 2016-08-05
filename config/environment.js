@@ -35,14 +35,6 @@ module.exports = function (environment) {
             authenticationRoute: 'signin',
             routeAfterAuthentication: 'posts',
             routeIfAlreadyAuthenticated: 'posts'
-        },
-
-        torii: {
-            providers: {
-                'ghost-oauth2': {
-                    apiKey: 'replace-me',
-                }
-            }
         }
     };
 
