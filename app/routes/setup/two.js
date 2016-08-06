@@ -10,10 +10,6 @@ export default Route.extend({
     session: injectService(),
     notifications: injectService(),
 
-    sessionAuthenticated() {
-        // noop - we don't want to redirect when authenticating during setup
-    },
-
     actions: {
         authenticateWithGhostOrg() {
             let authStrategy = 'authenticator:oauth2-ghost';
@@ -35,12 +31,16 @@ export default Route.extend({
         },
 
         authenticate(strategy, authentication) {
+            // we don't want to redirect after sign-in during setup
+            this.set('session.skipAuthSuccessHandler', true);
+
             // Authentication transitions to posts.index, we can leave spinner running unless there is an error
             this.get('session')
                 .authenticate(strategy, ...authentication)
+                .then(() => {
+                    this.get('controller.errors').remove('session');
+                })
                 .catch((error) => {
-                    this.toggleProperty('controller.loggingIn');
-
                     if (error && error.errors) {
                         // we don't get back an ember-data/ember-ajax error object
                         // back so we need to pass in a null status in order to
@@ -59,6 +59,9 @@ export default Route.extend({
                         // Connection errors don't return proper status message, only req.body
                         this.get('notifications').showAlert('There was a problem on the server.', {type: 'error', key: 'session.authenticate.failed'});
                     }
+                })
+                .finally(() => {
+                    this.toggleProperty('controller.loggingIn');
                 });
         }
     }
