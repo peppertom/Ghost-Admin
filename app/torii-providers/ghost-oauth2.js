@@ -7,7 +7,7 @@ let GhostOauth2 = Oauth2.extend({
     config: injectService(),
 
     name:    'ghost-oauth2',
-    baseUrl: 'http://patronus.ghostfoundation.org/oauth2/authorize',
+    baseUrl: 'http://patronus.ghostfoundation.org:8080/oauth2/authorize',
     apiKey: computed(function () {
         return this.get('config.patronusId');
     }),
