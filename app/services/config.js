@@ -4,8 +4,8 @@ import Service from 'ember-service';
 import computed from 'ember-computed';
 import injectService from 'ember-service/inject';
 
-// ember-cli-shims doesn't export _ProxyMixin
-const {_ProxyMixin} = Ember;
+// ember-cli-shims doesn't export _ProxyMixin ot testing
+const {_ProxyMixin, testing} = Ember;
 const {isNumeric} = $;
 
 function _mapType(val, type) {
@@ -45,7 +45,9 @@ export default Service.extend(_ProxyMixin, {
         });
 
         // TODO: remove once we have proper config values from Ghost
-        config.patronusAuth = true;
+        if (!testing) {
+            config.patronusAuth = true;
+        }
 
         return config;
     }),
