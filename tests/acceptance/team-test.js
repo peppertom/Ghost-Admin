@@ -62,11 +62,11 @@ describe('Acceptance: Team', function () {
     });
 
     describe('when logged in', function () {
-        let admin;
+        let admin, adminRole;
 
         beforeEach(function () {
-            let role = server.create('role', {name: 'Administrator'});
-            admin = server.create('user', {roles: [role]});
+            adminRole = server.create('role', {name: 'Administrator'});
+            admin = server.create('user', {roles: [adminRole]});
 
             server.loadFixtures();
 
@@ -192,18 +192,23 @@ describe('Acceptance: Team', function () {
             });
 
             it('fails sending an invite correctly', function () {
-                server.create('user', {email: 'test1@example.com'});
-                server.create('user', {email: 'test2@example.com', status: 'invited'});
+                server.create('user', {email: 'test1@example.com', roles: [adminRole]});
+                server.create('invite', {email: 'test2@example.com', roles: [adminRole]});
 
                 visit('/team');
 
                 // check our users lists are what we expect
                 andThen(() => {
-                    expect(find('.user-list.invited-users .user-list-item').length, 'number of invited users')
-                        .to.equal(1);
+                    expect(
+                        find('.user-list.invited-users .user-list-item').length,
+                        'number of invited users'
+                    ).to.equal(1);
+
                     // number of active users is 2 because of the logged-in user
-                    expect(find('.user-list.active-users .user-list-item').length, 'number of active users')
-                        .to.equal(2);
+                    expect(
+                        find('.user-list.active-users .user-list-item').length,
+                        'number of active users'
+                    ).to.equal(2);
                 });
 
                 // click the "invite new user" button to open the modal
@@ -215,8 +220,10 @@ describe('Acceptance: Team', function () {
 
                 andThen(() => {
                     // check the inline-validation
-                    expect(find('.fullscreen-modal .error .response').text().trim(), 'inviting existing user error')
-                        .to.equal('A user with that email address already exists.');
+                    expect(
+                        find('.fullscreen-modal .error .response').text().trim(),
+                        'inviting existing user error'
+                    ).to.equal('A user with that email address already exists.');
                 });
 
                 // fill in and submit the invite user modal with an invited user
@@ -225,14 +232,21 @@ describe('Acceptance: Team', function () {
 
                 andThen(() => {
                     // check the inline-validation
-                    expect(find('.fullscreen-modal .error .response').text().trim(), 'inviting invited user error')
-                        .to.equal('A user with that email address was already invited.');
+                    expect(
+                        find('.fullscreen-modal .error .response').text().trim(),
+                        'inviting invited user error'
+                    ).to.equal('A user with that email address was already invited.');
 
                     // ensure that there's been no change in our user lists
-                    expect(find('.user-list.invited-users .user-list-item').length, 'number of invited users after failed invites')
-                        .to.equal(1);
-                    expect(find('.user-list.active-users .user-list-item').length, 'number of active users after failed invites')
-                        .to.equal(2);
+                    expect(
+                        find('.user-list.invited-users .user-list-item').length,
+                        'number of invited users after failed invites'
+                    ).to.equal(1);
+
+                    expect(
+                        find('.user-list.active-users .user-list-item').length,
+                        'number of active users after failed invites'
+                    ).to.equal(2);
                 });
             });
         });
